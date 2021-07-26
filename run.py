@@ -50,7 +50,7 @@ def upload_file(file_name, bucket, object_name=None):
 def save_result(product_id, is_anomaly, reinspection_needed):
     output_filename = str(product_id) + ".csv"
 
-    with open('./tmp/' + output_filename, 'w', newline='') as csvfile:
+    with open('/tmp/' + output_filename, 'w', newline='') as csvfile:
         fieldnames = ['product_id', 'is_anomaly', 'reinspection_needed', \
                       'year', 'month', 'day', 'hour', 'minute', 'second']
         csvwriter = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -68,7 +68,7 @@ def save_result(product_id, is_anomaly, reinspection_needed):
                             'minute'    : now.minute, \
                             'second'    : now.second})
 
-    with open("./tmp/" + output_filename, "rb") as f:
+    with open("/tmp/" + output_filename, "rb") as f:
         s3.upload_fileobj(f, "lookout-for-vision-workshop", 'result/' + output_filename)
 
 
