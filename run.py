@@ -15,15 +15,18 @@ import os
 from time import sleep
 
 session = boto3.Session(region_name='us-east-1')
-ssm = session.client('ssm')
 s3 = session.client('s3')
 
+"""
+ssm = session.client('ssm')
 response = ssm.get_parameter(
     Name = 'anomaly_threshold'
 )
 
 anomaly_threshold = float(response['Parameter']['Value'])
+"""
 
+anomaly_threshold = 0.7
 
 def upload_file(file_name, bucket, object_name=None):
     """Upload a file to an S3 bucket
