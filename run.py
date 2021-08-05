@@ -88,18 +88,14 @@ def main(argv):
         is_anomaly = prediction['IsAnomalous']
         confidence = prediction['Confidence']
         reinspection_needed = False
+        
         if confidence <= anomaly_threshold:
             reinspection_needed = True
         save_result(s3_bucket_name, product_id, is_anomaly, reinspection_needed)
+        
         sleep(1)
     
     
-    
-    
-    
-    #result = l4v.predict(local_file="./images/134111_normal.jpeg")
-    
-    #print(result) 
 
 if __name__ == "__main__":
     # execute only if run as a script
