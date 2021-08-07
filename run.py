@@ -46,22 +46,16 @@ def save_result(s3_bucket_name, product_id, is_anomaly, reinspection_needed):
     output_filename = str(product_id) + ".csv"
     
     with open('/tmp/' + output_filename, 'w', newline='') as csvfile:
-        fieldnames = ['product_id', 'is_anomaly', 'reinspection_needed', \
-                      'year', 'month', 'day', 'hour', 'minute', 'second']
+        fieldnames = ['ProductId', 'IsAnomaly', 'ReinspectionNeeded', 'CapturedDate']
         csvwriter = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
         now = datetime.datetime.now()
-        
+  
         csvwriter.writeheader()
-        csvwriter.writerow({'product_id': product_id, \
-                            'is_anomaly': is_anomaly, \
-                            'reinspection_needed': reinspection_needed, \
-                            'year'      : now.year, \
-                            'month'     : now.month, \
-                            'day'       : now.day, \
-                            'hour'      : now.hour, \
-                            'minute'    : now.minute, \
-                            'second'    : now.second})
+        csvwriter.writerow({'ProductId': product_id, \
+                            'IsAnomaly': is_anomaly, \
+                            'ReinspectionNeeded': reinspection_needed, \
+                            'CapturedDate'      : now})
                             
     with open("/tmp/" + output_filename, "rb") as f:
         s3.upload_fileobj(f, s3_bucket_name, 'result/' + output_filename)
