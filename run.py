@@ -85,12 +85,15 @@ def main(argv):
         filename = os.path.basename(image_path)
         product_id = (regex.findall(filename))[0]
         
-        is_anomaly = prediction['IsAnomalous']
+        is_anomaly = 0
+        if prediction['IsAnomalous'] == True:
+            is_anomaly = 1
+            
         confidence = prediction['Confidence']
-        reinspection_needed = False
         
+        reinspection_needed = 0
         if confidence <= anomaly_threshold:
-            reinspection_needed = True
+            reinspection_needed = 1
         save_result(s3_bucket_name, product_id, is_anomaly, reinspection_needed)
         
         sleep(1)
