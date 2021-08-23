@@ -9,6 +9,7 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 import datetime
+import random
 import csv
 import re
 import os
@@ -19,7 +20,7 @@ session = boto3.Session(region_name='us-east-1')
 s3 = session.client('s3')
 
 # Threshold of Confidence
-anomaly_threshold = 0.7
+confidence_threshold = 0.7
 
 def upload_file(file_name, bucket, object_name=None):
     """Upload a file to an S3 bucket
@@ -41,11 +42,13 @@ def upload_file(file_name, bucket, object_name=None):
         logging.error(e)
         return False
     return True
-
+    
 def save_result(s3_bucket_name, product_id, is_anomaly, reinspection_needed):
     output_filename = str(product_id) + ".csv"
     
+
     with open('/tmp/' + output_filename, 'w', newline='') as csvfile:
+        
         fieldnames = ['ProductId', 'IsAnomaly', 'ReinspectionNeeded', 'CapturedDate']
         csvwriter = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
@@ -56,28 +59,28 @@ def save_result(s3_bucket_name, product_id, is_anomaly, reinspection_needed):
                             'IsAnomaly': is_anomaly, \
                             'ReinspectionNeeded': reinspection_needed, \
                             'CapturedDate'      : now})
-                            
+
+    
     with open("/tmp/" + output_filename, "rb") as f:
         s3.upload_fileobj(f, s3_bucket_name, 'result/' + output_filename)
-
 
 def main(argv):
     
     s3_bucket_name = argv[1] # s3 bucket name
 
     image_list = glob.glob("images/*")
-    image_list.sort()
+    #random.shuffle(image_list)
     
     l4v = LookoutForVision(project_name="lookout-for-vision-workshop")
     
-    regex = re.compile(r'\d+')
-    
+   
     for image_path in image_list:
+        
         prediction = l4v.predict(local_file=image_path)
         print(prediction)
         
         filename = os.path.basename(image_path)
-        product_id = (regex.findall(filename))[0]
+        product_id = int((re.findall(r'\d+', filename))[1])
         
         is_anomaly = 0
         if prediction['IsAnomalous'] == True:
@@ -86,14 +89,13 @@ def main(argv):
         confidence = prediction['Confidence']
         
         reinspection_needed = 0
-        if confidence <= anomaly_threshold:
+        if confidence <= confidence_threshold:
             reinspection_needed = 1
+        
         save_result(s3_bucket_name, product_id, is_anomaly, reinspection_needed)
         
-        sleep(1)
-    
-    
 
+        
 if __name__ == "__main__":
     # execute only if run as a script
     main(sys.argv)
