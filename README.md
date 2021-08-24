@@ -28,3 +28,9 @@ Here is the architecture this workshop covers:
 This is an example of the dashboard we're going to make. This workshop only uses simple data to create dashboards as shown below. You can create a dashboard in a variety of historical data you've collected.
 
 ![dashboard](resources/images/quicksight-dashboard.png)
+
+---
+
+### Dataset 
+The dataset we use is a subset of the [casting product image data for quality inspection](https://www.kaggle.com/ravirajsinh45/real-life-industrial-dataset-of-casting-product) dataset from Kaggle.
+
