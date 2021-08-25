@@ -118,8 +118,8 @@ def main(argv):
             reinspection_needed = 1
         
         save_result(s3_bucket_name, product_id, is_anomaly, reinspection_needed)
+        sleep(1)
         
-
         
 if __name__ == "__main__":
     # execute only if run as a script
